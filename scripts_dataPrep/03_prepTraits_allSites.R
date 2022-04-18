@@ -83,6 +83,9 @@ traits$SRL_m_g <- (traits$rootLength_cm/100) / traits$Root_Dry_Mass_g
 #RTD (g/cm3)
 traits$RTD_g_cm3 <- traits$Root_Dry_Mass_g / traits$rootVolume_cm3
 
+#remove values for SRL that are larger than 350 (observed global maximum)
+traits[traits$SRL_m_g > 500 & is.na(traits$SRL_m_g) == FALSE, "SRL_m_g"] <- NA
+
 # TLP data ----------------------------------------------------------------
 LOP <- rawLOP %>%
   select(OsmoticPotential_MPa, sampleID)
@@ -120,7 +123,7 @@ flagDat <- read.csv("../../Data/Raw Trait Data/FlagstaffTraitData.csv") %>%
 leafArea <- rawLeafArea %>%
   select(-c(X, X.1, X.2, X.3)) %>%
   rename(LeafArea_cm2 = "Leaf.Area..cm2..ImageJ") %>%
-  mutate(sampleID = paste0(Species, "_", Replicate))
+  mutate(sampleID = paste0(ï..Species, "_", Replicate))
 # update the 'rolled leaves' column to have no "NA"s
 leafArea[leafArea$LvsRolled != 1 | is.na(leafArea$LvsRolled), "LvsRolled"] <- 0
 
@@ -146,7 +149,12 @@ traits[traits$sampleID %in% names$sampleID,
 
 ## calculate SLA (cm2/g)
 traits$SLA_cm2_g <- traits$Leaf_Area_TRANSFORMED / traits$Leaf_Dry_Mass_g
+# check for SLA values that are too big
+traits[traits$SLA_cm2_g > 1000 & is.na(traits$SLA_cm2_g)==FALSE, "SLA_cm2_g"] <- NA
+
 traits$LDMC_g_g <- traits$Leaf_Dry_Mass_g / traits$Leaf_Wet_Mass_g
+# check for SLA values that are too big
+traits[traits$LDMC_g_g > 7 & is.na(traits$LDMC_g_g)==FALSE, "LDMC_g_g"] <- NA
 
 # Calculate mean trait values  --------------------------------------------
 ## for each site

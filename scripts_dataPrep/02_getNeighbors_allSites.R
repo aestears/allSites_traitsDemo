@@ -18,8 +18,12 @@ ID_dat <- readRDS("../trackSpp_outputData/ID_buff5_dorm1_demoDat.RDS")
 KS_dat <- readRDS("../trackSpp_outputData/KS_buff5_dorm1_demoDat.RDS")
 MT_dat <- readRDS("../trackSpp_outputData/MT_buff5_dorm1_demoDat.RDS")
 NM_dat <- readRDS("../trackSpp_outputData/NM_buff5_dorm1_demoDat.RDS")
+AZn_dat <- readRDS("../trackSpp_outputData/AZn_buff5_dorm1_demoDat.RDS")
 
 # getNeighbors ----------------------------------------
+## remove CRS from AZn_dat (causing problems)
+st_crs(AZn_dat) <- NA
+
 # fix issue w/ some individuals having an 'na' in the survives column?? checked, and they should be '0's
 
 AZs_dat[AZs_dat$survives_tplus1==.5 & is.na(AZs_dat$survives_tplus1) == FALSE,]$survives_tplus1 <- 0
@@ -109,6 +113,74 @@ AZs_datNew <- rbind(AZs_good, badAgg)
 AZs_neighbors_buff10_allSpp_count <- getNeighbors(dat = AZs_datNew, buff = .10, method = "count",
                                                   compType = "allSpp", output = "summed")
 
+## for CO
+CO_neighbors_buff10_allSpp_cont <- getNeighbors(dat = CO_dat, buff = .10, method = "count",
+                                                compType = "allSpp", output = "summed")
+
+## for ID
+ID_neighbors_buff10_allSpp_count <- getNeighbors(dat = ID_dat, buff = .10, method = "count",
+                                                compType = "allSpp", output = "summed")
+
+## for KS
+KS_neighbors_buff10_allSpp_count <- getNeighbors(dat = KS_dat, buff = .10, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for MT
+MT_neighbors_buff10_allSpp_count <- getNeighbors(dat = MT_dat, buff = .10, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for NM
+NM_neighbors_buff10_allSpp_count <- getNeighbors(dat = NM_dat, buff = .10, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for AZn
+AZn_neighbors_buff10_allSpp_count <- getNeighbors(dat = AZn_dat, buff = .10, method = "count",
+                                                  compType = "allSpp", output = "summed")
+
+#### save output ####
+saveRDS(AZs_neighbors_buff10_allSpp_count, file = "../getNeighbors_outputData/AZs_buff10_allSpp_count.RDS")
+saveRDS(CO_neighbors_buff10_allSpp_cont, file = "../getNeighbors_outputData/CO_buff10_allSpp_count.RDS")
+saveRDS(ID_neighbors_buff10_allSpp_count, file = "../getNeighbors_outputData/ID_buff10_allSpp_count.RDS")
+saveRDS(KS_neighbors_buff10_allSpp_count, file = "../getNeighbors_outputData/KS_buff10_allSpp_count.RDS")
+saveRDS(MT_neighbors_buff10_allSpp_count, file = "../getNeighbors_outputData/MT_buff10_allSpp_count.RDS")
+saveRDS(NM_neighbors_buff10_allSpp_count, file = "../getNeighbors_outputData/NM_buff10_allSpp_count.RDS")
+saveRDS(AZn_neighbors_buff10_allSpp_count, file = "../getNeighbors_outputData/AZn_buff15_allSpp_count.RDS")
+#### buff 15 ####
+AZs_neighbors_buff15_allSpp_count <- getNeighbors(dat = AZs_datNew, buff = .15, method = "count",
+                                                  compType = "allSpp", output = "summed")
+
+## for CO
+CO_neighbors_buff15_allSpp_cont <- getNeighbors(dat = CO_dat, buff = .15, method = "count",
+                                                compType = "allSpp", output = "summed")
+
+## for ID
+ID_neighbors_buff15_allSpp_count <- getNeighbors(dat = ID_dat, buff = .15, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for KS
+KS_neighbors_buff15_allSpp_count <- getNeighbors(dat = KS_dat, buff = .15, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for MT
+MT_neighbors_buff15_allSpp_count <- getNeighbors(dat = MT_dat, buff = .15, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for NM
+NM_neighbors_buff15_allSpp_count <- getNeighbors(dat = NM_dat, buff = .15, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+## for AZn
+AZn_neighbors_buff15_allSpp_count <- getNeighbors(dat = AZn_dat, buff = .15, method = "count",
+                                                 compType = "allSpp", output = "summed")
+
+#### save output ####
+saveRDS(AZs_neighbors_buff15_allSpp_count, file = "../getNeighbors_outputData/AZs_buff15_allSpp_count.RDS")
+saveRDS(CO_neighbors_buff15_allSpp_cont, file = "../getNeighbors_outputData/CO_buff15_allSpp_count.RDS")
+saveRDS(ID_neighbors_buff15_allSpp_count, file = "../getNeighbors_outputData/ID_buff15_allSpp_count.RDS")
+saveRDS(KS_neighbors_buff15_allSpp_count, file = "../getNeighbors_outputData/KS_buff15_allSpp_count.RDS")
+saveRDS(MT_neighbors_buff15_allSpp_count, file = "../getNeighbors_outputData/MT_buff15_allSpp_count.RDS")
+saveRDS(NM_neighbors_buff15_allSpp_count, file = "../getNeighbors_outputData/NM_buff15_allSpp_count.RDS")
+saveRDS(AZn_neighbors_buff15_allSpp_count, file = "../getNeighbors_outputData/AZn_buff15_allSpp_count.RDS")
 
 #### getNeighbors() ####
 function (dat, buff, method, compType = "allSpp", output = "summed",
@@ -236,7 +308,7 @@ function (dat, buff, method, compType = "allSpp", output = "summed",
             diag(overlapM) <- FALSE
             if (output == "summed") {
               overlapList <- apply(X = overlapM, MARGIN = 1,
-                                   FUN = function(x) c(which(x == TRUE)))
+                                   FUN = function(x) c(which(x == TRUE)), simplify = FALSE)
               if (length(overlapList) > 0) {
                 datSpp$neighbors <- unlist(lapply(overlapList,
                                                   length))

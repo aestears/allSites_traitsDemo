@@ -14,7 +14,7 @@ library(plantTracker)
 # Load Data ---------------------------------------------------------------
 # read in d.f that contains all shapefiles (Megashape), saved as an .rdata object
 #megaShape <- st_read(dsn = "/Users/Alice/Dropbox/Grad School/Research/Trait Project/Data/QuadratShapefiles/MegaShape.gpkg")
-load("../../Data/QuadratShapefiles/MegaShapeEnvironment.RData")
+load("../../MegaShapeEnvironment.RData")
 # temporarily make it tiny:
 megaShape <- bigShape4
 # megaShape <- megaShape[1:1000,]
@@ -109,7 +109,6 @@ for (i in 1:length(unique(tempDat$Quad))) {
 
 saveRDS(ID_demo_dorm1_buff5_buffG05_aggregated, file = "../ID_buff5_dorm1_demoDat.RDS")
 
-
 #### MT data ####
 tempDat <- megaShape[megaShape$Site == "MT" ,]
 # remove a duplicate
@@ -149,9 +148,25 @@ for (i in 1:length(unique(tempDat$Quad))) {
 saveRDS(KS_demo_dorm1_buff5_buffG05_aggregated, file = "../KS_buff5_dorm1_demoDat.RDS")
 
 #### NM data ####
-tempDat <- megaShape[megaShape$Site == "NM" ,]
+tempDat <- megaShape[megaShape$Site == "NM" ,] %>%
+  mutate(Year = as.integer(Year), Quad = str_to_upper(Quad))
+## change the appropriate years for the NM dataset
+projectYears <- read.csv("../../cross_site_analysis/Jornada_quadrat_sampling_dates.csv") %>%
+  select(-X) %>%
+  mutate(quadrat = str_to_upper(quadrat))
+
+tempDat_new <- tempDat %>%
+  left_join(projectYears, by = c("Year" = "year", "Quad" = "quadrat", "Month" = "month")) %>%
+  mutate(Year = project_year) %>%
+  select(-c(day, project_year))
+
+# rescale the geometry to be on a scale of 1m
+tempDat_new$geometry <- tempDat_new$geometry/max(st_bbox(tempDat_new))
+tempDat_new$Area <- st_area(tempDat_new$geometry)
+
 # remove a duplicate
 tempDat <- tempDat[!duplicated(tempDat),]
+names(inv) <- str_to_upper(names(inv))
 NM_demo_dorm1_buff5_buffG05 <- trackSpp(dat = tempDat, inv = inv, dorm = 1, buff = .05, buffGenet = .005, clonal = clonalDF, aggByGenet = FALSE)
 
 ## aggregate by genet
